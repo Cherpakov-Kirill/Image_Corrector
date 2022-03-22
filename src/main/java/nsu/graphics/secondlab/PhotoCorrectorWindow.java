@@ -42,6 +42,11 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
             addRadioMenuItem("Filters/Water-colourisation", "Apply a water-colourisation", KeyEvent.VK_A, "/Water-colourisation.png", "watercolourisation");
             addRadioMenuItem("Filters/Gray World", "Apply a Gray World", KeyEvent.VK_W, "/GrayWorld.png", "grayWorld");
 
+            addSubMenu("Rendering", KeyEvent.VK_R);
+            addRadioMenuItem("Rendering/Bilinear interpolation", "Apply the bilinear interpolation algorithm", KeyEvent.VK_L, "/Linear.png", "linearInterpolation");
+            addRadioMenuItem("Rendering/Bicubic interpolation", "Apply the bicubic interpolation algorithm", KeyEvent.VK_C, "/Cubic.png", "cubicInterpolation");
+            addRadioMenuItem("Rendering/Nearest neighboring interpolation", "Apply the nearest neighboring interpolation algorithm", KeyEvent.VK_N, "/Nearest.png", "nearestInterpolation");
+
             addSubMenu("Help", KeyEvent.VK_H);
             addMenuItem("Help/About...", "Shows program version and copyright information", KeyEvent.VK_A, "/About.png", "showAbout");
 
@@ -82,6 +87,7 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
             throw new RuntimeException(e);
         }
         selectView("View/Real size");
+        menuRenderingMap.get("Rendering/Bilinear interpolation").setSelected(true);
         extensions = new String[4];
         extensions[0] = "png";
         extensions[1] = "jpeg";
@@ -114,6 +120,18 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
     public void fitToScreen() {
         photoPanel.fitToScreen();
         selectView("View/Fit to screen");
+    }
+
+    public void linearInterpolation(){
+        photoPanel.setLinearInterpolation();
+    }
+
+    public void cubicInterpolation(){
+        photoPanel.setCubicInterpolation();
+    }
+
+    public void nearestInterpolation(){
+        photoPanel.setNearestInterpolation();
     }
 
     //Filters/Set original - set original image

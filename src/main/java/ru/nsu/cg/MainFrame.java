@@ -27,6 +27,9 @@ public class MainFrame extends JFrame {
     protected final ButtonGroup menuToolbarView;
     protected final Map<String, JToggleButton> menuToolbarViewMap;
 
+    protected final ButtonGroup menuRendering;
+    protected final Map<String, JRadioButtonMenuItem> menuRenderingMap;
+
     protected final JMenuBar menuBar;
     protected JToolBar toolBar;
 
@@ -47,6 +50,9 @@ public class MainFrame extends JFrame {
 
         menuToolbarView = new ButtonGroup();
         menuToolbarViewMap = new HashMap<>();
+
+        menuRendering = new ButtonGroup();
+        menuRenderingMap = new HashMap<>();
 
         menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -266,9 +272,13 @@ public class MainFrame extends JFrame {
                 menuView.add(item);
             }
 
+            if (isRenderingMenuItem(title)) {
+                menuRenderingMap.put(title, item);
+                menuRendering.add(item);
+            }
+
         } else if (element instanceof JPopupMenu) {
             ((JPopupMenu) element).add(item);
-            menuFilters.add(item);
             if (isFiltersMenuItem(title)) {
                 menuFiltersMap.put(title, item);
                 menuFilters.add(item);
@@ -277,6 +287,11 @@ public class MainFrame extends JFrame {
             if (isViewMenuItem(title)) {
                 menuViewMap.put(title, item);
                 menuView.add(item);
+            }
+
+            if (isRenderingMenuItem(title)) {
+                menuRenderingMap.put(title, item);
+                menuRendering.add(item);
             }
         } else
             throw new InvalidParameterException("Invalid menu path: " + title);
@@ -329,6 +344,10 @@ public class MainFrame extends JFrame {
 
     private boolean isViewMenuItem(String menuPath) {
         return (menuPath.substring(0, menuPath.indexOf("/"))).equals("View");
+    }
+
+    private boolean isRenderingMenuItem(String menuPath) {
+        return (menuPath.substring(0, menuPath.indexOf("/"))).equals("Rendering");
     }
 
     /**

@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ImagePanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+    private Object interpolationType;
     private final Dimension panelSize;          // visible image size
     private final JScrollPane spIm;
     private BufferedImage img = null;           // image to view
@@ -49,6 +50,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
      * @param height     - start height of panel
      */
     public ImagePanel(JScrollPane scrollPane, int width, int height) {
+        interpolationType = RenderingHints.VALUE_INTERPOLATION_BILINEAR;
         spIm = scrollPane;
         spIm.setWheelScrollingEnabled(false);
         spIm.setDoubleBuffered(true);
@@ -75,11 +77,13 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void paintComponent(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, panelSize.width, panelSize.height);
-        if (img != null) g.drawImage(img, 4, 4, panelSize.width - 8, panelSize.height - 8, null);
-
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, interpolationType);
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, panelSize.width, panelSize.height);
+        if (img != null) g2d.drawImage(img, 4, 4, panelSize.width - 8, panelSize.height - 8, null);
+
+
         g2d.setColor(Color.BLACK);
         Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5}, 0);
         g2d.setStroke(dashed);
@@ -91,6 +95,18 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
         if (scalingRectangle != null) {
             g2d.draw(scalingRectangle);
         }
+    }
+
+    public void setLinearInterpolation() {
+        interpolationType = RenderingHints.VALUE_INTERPOLATION_BILINEAR;
+    }
+
+    public void setCubicInterpolation() {
+        interpolationType = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+    }
+
+    public void setNearestInterpolation() {
+        interpolationType = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
     }
 
     /**
@@ -160,7 +176,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
                 this.img = filtered;
 
                 imSize = new Dimension(img.getWidth(), img.getHeight());
-                setPanelSize(img.getWidth(),img.getHeight());
+                setPanelSize(img.getWidth(), img.getHeight());
             }
             case "Shades of grey" -> this.img = ShadesOfGrey.applyFilter(originalImg);
             case "Invert" -> this.img = Inverter.applyFilter(originalImg);
@@ -220,7 +236,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(img, 0, 0, null);
         g.dispose();
 
-        if(fitToScreen) fitToScreen();
+        if (fitToScreen) fitToScreen();
         else realSize();
         return true;
     }
@@ -388,12 +404,11 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(filteredImage == null) return;
+        if (filteredImage == null) return;
         if (filteredImageOnScreen) {
             img = originalImg;
             filteredImageOnScreen = false;
-        }
-        else {
+        } else {
             img = filteredImage;
             filteredImageOnScreen = true;
         }
