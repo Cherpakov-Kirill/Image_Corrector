@@ -1,6 +1,7 @@
 package nsu.graphics.secondlab;
 
 import nsu.graphics.secondlab.filters.*;
+import nsu.graphics.secondlab.parameters.BoarderParameters;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -24,6 +25,8 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
     private int lastX = 0, lastY = 0;           // last captured mouse coordinates
     private final double zoomK = 0.05;          // scroll zoom coefficient
     boolean fitToScreen;
+    boolean filteredImageOnScreen;              //if true - filtered image is on screen
+    private BufferedImage filteredImage;
     private Rectangle scalingRectangle;
 
     private final Smoothing smoothingFilter;
@@ -33,6 +36,9 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
     private final Median medianFilter;
     private final WaterColourisation waterColourisationFilter;
     private final Rotation changeRotation;
+    private final Dithering ditheringFilter;
+    private final OrderedDithering orderedDithering;
+    private final Boarder boarderFilter;
 
     /**
      * Creates default Image-viewer in the given JScrollPane.
@@ -63,6 +69,9 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
         this.medianFilter = new Median();
         this.waterColourisationFilter = new WaterColourisation(medianFilter);
         this.changeRotation = new Rotation();
+        ditheringFilter = new Dithering();
+        orderedDithering = new OrderedDithering();
+        boarderFilter = new Boarder();
     }
 
     @Override
@@ -93,14 +102,13 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
      *
      * @param newIm - new image to view
      */
-    public void setImage(BufferedImage newIm) {
+    private void setImage(BufferedImage newIm) {
         // fitToScreen == true (means "fit screen (panel))"
         // fitToScreen == false (means "real size (panel))"
-        originalImg = new BufferedImage(newIm.getWidth(), newIm.getHeight(), newIm.getType());
-        Graphics g = originalImg.getGraphics();
+        img = new BufferedImage(newIm.getWidth(), newIm.getHeight(), newIm.getType());
+        Graphics g = img.getGraphics();
         g.drawImage(newIm, 0, 0, null);
         g.dispose();
-        img = newIm;
         imSize = new Dimension(img.getWidth(), img.getHeight());
 
         if (fitToScreen) {
@@ -134,6 +142,89 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
+    public void openFile(File file) {
+        try {
+            originalImg = ImageIO.read(file);
+            setImage(originalImg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean applyFilter(String selectedFilter) {
+        imSize = new Dimension(originalImg.getWidth(), originalImg.getHeight());
+        switch (selectedFilter) {
+            case "Rotation" -> {
+                BufferedImage filtered = changeRotation.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+
+                imSize = new Dimension(img.getWidth(), img.getHeight());
+                setPanelSize(img.getWidth(),img.getHeight());
+            }
+            case "Shades of grey" -> this.img = ShadesOfGrey.applyFilter(originalImg);
+            case "Invert" -> this.img = Inverter.applyFilter(originalImg);
+            case "Smoothing" -> {
+                BufferedImage filtered = smoothingFilter.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            case "Sharpness" -> {
+                BufferedImage filtered = sharpnessFilter.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            case "Embossing" -> {
+                BufferedImage filtered = embossingFilter.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            case "Gamma" -> {
+                BufferedImage filtered = gammaCorrection.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            case "Median" -> {
+                BufferedImage filtered = medianFilter.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            case "Water-colourisation" -> {
+                BufferedImage filtered = waterColourisationFilter.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            case "Gray World" -> this.img = GreyWorld.applyFilter(originalImg);
+            case "Dithering" -> {
+                BufferedImage filtered = ditheringFilter.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            case "Ordered Dithering" -> {
+                BufferedImage filtered = orderedDithering.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            case "Boarder" -> {
+                BufferedImage filtered = boarderFilter.selectFilter(originalImg);
+                if (filtered == null) return false;
+                this.img = filtered;
+            }
+            default -> {
+                return true;
+            }
+        }
+        filteredImageOnScreen = true;
+        filteredImage = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+        Graphics g = filteredImage.getGraphics();
+        g.drawImage(img, 0, 0, null);
+        g.dispose();
+
+        if(fitToScreen) fitToScreen();
+        else realSize();
+        return true;
+    }
+
     ///IMAGE VIEW
 
     /**
@@ -142,6 +233,8 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
     public void setOriginalImage() {
         setImage(originalImg);
+        filteredImage = null;
+        filteredImageOnScreen = false;
     }
 
     /**
@@ -149,7 +242,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
      */
     public void fitToScreen() {
         fitToScreen = true;
-        setImage(originalImg);
+        setImage(img);
     }
 
     /**
@@ -157,7 +250,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
      */
     public void realSize() {
         fitToScreen = false;
-        setImage(originalImg);
+        setImage(img);
     }
 
 
@@ -185,7 +278,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
     /**
      * Sets panelSize to the maximum available view-size with hidden scroll bars.
      */
-    public void setMaxVisibleRectSize() {
+    private void setMaxVisibleRectSize() {
         // maximum size for panel without scrolling (inner border of the ScrollPane)
         setPanelSize(getVisibleRectSize().width - 8, getVisibleRectSize().height - 8);    // max size, but possibly with enabled scroll-bars
         revalidate();
@@ -196,7 +289,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
     ///SCROLL OF IMAGE
 
-    public void setView(Rectangle rect) {
+    private void setView(Rectangle rect) {
         setView(rect, 10);
     }
 
@@ -258,8 +351,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
         // Check for minimum size where we can still increase size
         int newPW = (int) (panelSize.width * k);
-        if (newPW == (int) (newPW * (1 + zoomK)))
-            return;
+        if (newPW == (int) (newPW * (1 + zoomK))) return;
 
         if (k > 1) {
             int newPH = (int) (panelSize.height * k);
@@ -274,7 +366,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
             }
         }
 
-        setPanelSize(newPW, (int) ((long) panelSize.width * imSize.height / imSize.width));
+        setPanelSize(newPW, (int) ((long) newPW * imSize.height / imSize.width));
 
         // Move so that mouse position doesn't visibly change
         int x = (int) (e.getX() * k);
@@ -292,6 +384,20 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
         spIm.getHorizontalScrollBar().setValue(scroll.x);
         spIm.getVerticalScrollBar().setValue(scroll.y);
         spIm.repaint();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(filteredImage == null) return;
+        if (filteredImageOnScreen) {
+            img = originalImg;
+            filteredImageOnScreen = false;
+        }
+        else {
+            img = filteredImage;
+            filteredImageOnScreen = true;
+        }
+        repaint();
     }
 
 
@@ -357,11 +463,6 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
     ///NOT USED
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
     public void mouseEntered(MouseEvent e) {
     }
 
@@ -371,51 +472,5 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseMoved(MouseEvent e) {
-    }
-
-    public boolean applyFilter(String selectedFilter) {
-        switch (selectedFilter) {
-            case "Rotation" -> {
-                BufferedImage filtered = changeRotation.selectFilter(originalImg);
-                if (filtered == null) return false;
-                this.img = filtered;
-            }
-            case "Shades of grey" -> this.img = ShadesOfGrey.applyFilter(originalImg);
-            case "Invert" -> this.img = Inverter.applyFilter(originalImg);
-            case "Smoothing" -> {
-                BufferedImage filtered = smoothingFilter.selectFilter(originalImg);
-                if (filtered == null) return false;
-                this.img = filtered;
-            }
-            case "Sharpness" -> {
-                BufferedImage filtered = sharpnessFilter.selectFilter(originalImg);
-                if (filtered == null) return false;
-                this.img = filtered;
-            }
-            case "Embossing" -> {
-                BufferedImage filtered = embossingFilter.selectFilter(originalImg);
-                if (filtered == null) return false;
-                this.img = filtered;
-            }
-            case "Gamma" -> {
-                BufferedImage filtered = gammaCorrection.selectFilter(originalImg);
-                if (filtered == null) return false;
-                this.img = filtered;
-            }
-            case "Median" -> {
-                BufferedImage filtered = medianFilter.selectFilter(originalImg);
-                if (filtered == null) return false;
-                this.img = filtered;
-            }
-            case "Water-colourisation" -> {
-                BufferedImage filtered = waterColourisationFilter.selectFilter(originalImg);
-                if (filtered == null) return false;
-                this.img = filtered;
-            }
-            case "Gray World" -> this.img = GreyWorld.applyFilter(originalImg);
-        }
-        repaint();
-        spIm.repaint();
-        return true;
     }
 }

@@ -15,7 +15,6 @@ import ru.nsu.cg.MainFrame;
 
 public class PhotoCorrectorWindow extends MainFrame implements ComponentListener {
     private final ImagePanel photoPanel;
-    private final JScrollPane scrollPane;
     private final String[] extensions;
 
     public PhotoCorrectorWindow() {
@@ -73,23 +72,18 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
             addToolBarToggleButton("Filters/Water-colourisation");
             addToolBarToggleButton("Filters/Gray World");
 
-            scrollPane = new JScrollPane();
+            JScrollPane scrollPane = new JScrollPane();
             photoPanel = new ImagePanel(scrollPane, 685, 395);
             scrollPane.setViewportView(photoPanel);
 
             add(scrollPane);
             addComponentListener(this);
             setBackground(Color.WHITE);
-            //scrollPane.revalidate();
-            //photoPanel.setMaxVisibleRectSize();
-            /*String path = "/home/kirill/Desktop/Screenshot from 2022-03-15 00-23-44.png";
+
+            String path = "/home/kirill/Desktop/Screenshot from 2022-03-15 00-23-44.png";
             File file = new File(path);
-            try {
-                photoPanel.setImage(ImageIO.read(file));
-                System.out.println("Opened file " + file.getAbsolutePath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+            photoPanel.openFile(file);
+            System.out.println("Opened file " + file.getAbsolutePath());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -103,14 +97,10 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
 
     //File/Open - opens any image file
     public void openFile() {
-        try {
-            File file = getOpenFileName(extensions);
-            photoPanel.setImage(ImageIO.read(file));
-            selectFilter("Filters/Set original");
-            System.out.println("Opened file " + file.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        File file = getOpenFileName(extensions);
+        photoPanel.openFile(file);
+        selectFilter("Filters/Set original");
+        System.out.println("Opened file " + file.getAbsolutePath());
     }
 
     //File/Save - saves image file
@@ -210,6 +200,7 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
     }
 
     public void selectFilter(String title) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         if (photoPanel.applyFilter(title.substring(title.lastIndexOf("/") + 1))) {
             JRadioButtonMenuItem item = menuFiltersMap.get(title);
             item.setSelected(true);
@@ -218,6 +209,7 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
         } else {
             setOriginalImage();
         }
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
     public void selectView(String title) {
@@ -225,7 +217,6 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
         item.setSelected(true);
         JToggleButton button = menuToolbarViewMap.get(title);
         button.setSelected(true);
-        selectFilter("Filters/Set original");
     }
 
 

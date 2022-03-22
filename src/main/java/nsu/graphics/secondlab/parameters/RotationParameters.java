@@ -19,12 +19,12 @@ public class RotationParameters extends ParametersWindow {
         panel.add(gammaSlider);
     }
 
-    public boolean showDialog(){
+    public boolean showDialog() {
         int res = JOptionPane.showConfirmDialog(this, panel, "Rotation settings", JOptionPane.OK_CANCEL_OPTION);
         return res == 0 && checkValue(degree.getText(), -180, 180);
     }
 
-    public double getDegree(){
+    public double getDegree() {
         return Double.parseDouble(degree.getText());
     }
 

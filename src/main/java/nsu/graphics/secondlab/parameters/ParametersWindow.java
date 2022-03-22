@@ -86,18 +86,18 @@ public class ParametersWindow extends JFrame {
             if (items == null) {
                 if (checkValue(text, min, max)) {
                     double value = Double.parseDouble(text);
-                    slider.setValue((int)value*multiplier);
+                    slider.setValue((int) value * multiplier);
                 }
             } else {
                 if (checkValue(text, items)) {
                     int value = Integer.parseInt(text);
-                    slider.setValue(value*multiplier);
+                    slider.setValue(value * multiplier);
                 }
             }
         }
     }
 
-    class SliderListener implements ChangeListener {
+    static class SliderListener implements ChangeListener {
         JTextField textBox;
         JSlider slider;
         Set<Integer> items;
@@ -119,20 +119,21 @@ public class ParametersWindow extends JFrame {
             this.slider = slider;
             this.textBox = textBox;
             this.items = items;
+            this.multiplier = 1;
         }
 
         @Override
         public void stateChanged(ChangeEvent e) {
-            double value = ((JSlider) e.getSource()).getValue() / (double)multiplier;
+            double value = ((JSlider) e.getSource()).getValue() / (double) multiplier;
             if (items == null) {
                 textBox.setText(String.valueOf(value));
             } else {
-                if (items.contains((int)value)) {
+                if (items.contains((int) value)) {
                     textBox.setText(String.valueOf(value));
                 } else {
                     value++;
                     textBox.setText(String.valueOf(value));
-                    slider.setValue((int)value);
+                    slider.setValue((int) value);
                 }
             }
 
