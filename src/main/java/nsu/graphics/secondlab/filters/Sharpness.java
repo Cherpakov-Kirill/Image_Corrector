@@ -29,7 +29,6 @@ public class Sharpness extends FilterApplier {
 
     private void createFilter() {
         double[][] filter = null;
-        //double[][] filter = new double[][]{{0, 0, 0}, {0, 1, 0}, {0, 0, 0}};
         switch (filterSize) {
             case 3 -> filter = new double[][]{{-1, -1, -1}, {-1, 9, -1}, {-1, -1, -1}};
             case 5 -> filter = new double[][]{{-1, -1, -1, -1, -1}, {-1, 2, 2, 2, -1}, {-1, 2, 8, 2, -1}, {-1, 2, 2, 2, -1}, {-1, -1, -1, -1, -1}};

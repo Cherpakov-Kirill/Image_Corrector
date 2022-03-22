@@ -33,7 +33,7 @@ public class GammaCorrection {
     private static final int BLUE_OFFSET = 0;
 
     public BufferedImage applyFilter(BufferedImage in){
-        BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), in.getType());
+        BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = out.getGraphics();
         g.drawImage(in, 0, 0, null);
         g.dispose();
@@ -42,7 +42,6 @@ public class GammaCorrection {
         for (int h = 0; h < heightOfImage; h++) {
             for (int w = 0; w < widthOfImage; w++) {
                 int rgb = out.getRGB(w,h);
-                //int alpha = (int) Math.round(255 * Math.pow((double)((rgb >> ALPHA_OFFSET) & 0xff) / 255.0, degree));
                 int red = (int) Math.round(255 * Math.pow((double)((rgb >> RED_OFFSET) & 0xff) / 255.0, gamma));
                 int green = (int) Math.round(255 * Math.pow((double)((rgb >> GREEN_OFFSET) & 0xff) / 255.0, gamma));
                 int blue = (int) Math.round(255 * Math.pow((double)((rgb >> BLUE_OFFSET) & 0xff) / 255.0, gamma));

@@ -10,7 +10,7 @@ public class GreyWorld {
     private static final int BLUE_OFFSET = 0;
 
     public static BufferedImage applyFilter(BufferedImage in) {
-        BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), in.getType());
+        BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = out.getGraphics();
         g.drawImage(in, 0, 0, null);
         g.dispose();

@@ -95,7 +95,7 @@ public class FilterApplier {
         int widthWithOffset = widthOfImage + filterStep * 2;
         int heightWithOffset = heightOfImage + filterStep * 2;
 
-        this.in = new BufferedImage(widthWithOffset, heightWithOffset, image.getType());
+        this.in = new BufferedImage(widthWithOffset, heightWithOffset, BufferedImage.TYPE_INT_ARGB);
         Graphics g = in.getGraphics();
         g.drawImage(image, filterStep, filterStep, image.getWidth(), image.getHeight(), null);
         g.dispose();

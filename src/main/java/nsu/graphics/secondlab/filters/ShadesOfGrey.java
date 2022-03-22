@@ -14,7 +14,7 @@ public class ShadesOfGrey {
     private static final double GS_BLUE  = 0.114;
 
     public static BufferedImage applyFilter(BufferedImage in){
-        BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), in.getType());
+        BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = out.getGraphics();
         g.drawImage(in, 0, 0, null);
         g.dispose();

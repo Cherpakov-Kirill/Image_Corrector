@@ -41,7 +41,7 @@ public class SmoothingParameters extends ParametersWindow {
     }
 
     public int getFilterSize(){
-        return Integer.parseInt(filterSize.getText());
+        return (int)Double.parseDouble(filterSize.getText());
     }
 
     public double getSigma(){

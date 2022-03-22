@@ -26,9 +26,6 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
             addRadioMenuItem("View/Fit to screen", "Fit image to the screen", KeyEvent.VK_F, "/FitImage.png", "fitToScreen");
             addRadioMenuItem("View/Real size", "Set real size", KeyEvent.VK_R, "/RealSize.png", "realSize");
 
-            //addSubMenu("Tools", KeyEvent.VK_F);
-
-
             addSubMenu("Filters", KeyEvent.VK_F);
             addRadioMenuItem("Filters/Set original", "Set original image", KeyEvent.VK_O, "/Original.png", "setOriginalImage");
             addRadioMenuItem("Filters/Rotation", "Change rotation", KeyEvent.VK_R, "/Rotation.png", "changeRotation");
@@ -77,10 +74,10 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
             addComponentListener(this);
             setBackground(Color.WHITE);
 
-            String path = "/home/kirill/Desktop/Screenshot from 2022-03-15 00-23-44.png";
+            /*String path = "/home/kirill/Desktop/Screenshot from 2022-03-15 00-23-44.png";
             File file = new File(path);
             photoPanel.openFile(file);
-            System.out.println("Opened file " + file.getAbsolutePath());
+            System.out.println("Opened file " + file.getAbsolutePath());*/
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

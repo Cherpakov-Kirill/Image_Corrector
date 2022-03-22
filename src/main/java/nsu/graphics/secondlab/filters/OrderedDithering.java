@@ -127,7 +127,7 @@ public class OrderedDithering {
     }
 
     private void applyFilter(BufferedImage in) {
-        this.out = new BufferedImage(in.getWidth(), in.getHeight(), in.getType());
+        this.out = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = out.getGraphics();
         g.drawImage(in, 0, 0, null);
         g.dispose();

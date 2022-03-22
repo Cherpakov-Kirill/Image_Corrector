@@ -52,7 +52,7 @@ public class Boarder extends FilterApplier {
     }
 
     private void applyBoarderFilter(BufferedImage in) {
-        this.out = new BufferedImage(in.getWidth(), in.getHeight(), in.getType());
+        this.out = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
         widthOfImage = out.getWidth();
         heightOfImage = out.getHeight();
         switch (operatorType) {

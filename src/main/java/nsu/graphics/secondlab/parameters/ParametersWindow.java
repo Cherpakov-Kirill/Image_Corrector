@@ -35,8 +35,8 @@ public class ParametersWindow extends JFrame {
 
     protected boolean checkValue(String val, Set<Integer> items) {
         if (isNumeric(val)) {
-            Integer value = Integer.parseInt(val);
-            if (items.contains(value)) {
+            double value = Double.parseDouble(val);
+            if (items.contains((int)value)) {
                 return true;
             }
         }

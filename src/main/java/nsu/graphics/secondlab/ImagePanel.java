@@ -77,6 +77,8 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
     public void paintComponent(Graphics g) {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, panelSize.width, panelSize.height);
+        if (img != null) g.drawImage(img, 4, 4, panelSize.width - 8, panelSize.height - 8, null);
+
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.BLACK);
         Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5}, 0);
@@ -85,7 +87,6 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
         g2d.drawLine(4, 4, 4, panelSize.height - 4);
         g2d.drawLine(panelSize.width - 4, 4, panelSize.width - 4, panelSize.height - 4);
         g2d.drawLine(4, panelSize.height - 4, panelSize.width - 4, panelSize.height - 4);
-        if (img != null) g.drawImage(img, 4, 4, panelSize.width - 8, panelSize.height - 8, null);
         //  Paint the Rectangle as the mouse is being dragged
         if (scalingRectangle != null) {
             g2d.draw(scalingRectangle);
