@@ -1,7 +1,6 @@
 package nsu.graphics.secondlab;
 
 import nsu.graphics.secondlab.filters.*;
-import nsu.graphics.secondlab.parameters.BoarderParameters;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

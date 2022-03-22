@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import static java.lang.Math.*;
 
 public class Smoothing extends FilterApplier {
-    private SmoothingParameters parameters;
+    private final SmoothingParameters parameters;
     private int filterSize;
     private double sigma;
 

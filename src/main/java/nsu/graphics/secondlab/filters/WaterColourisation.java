@@ -3,7 +3,7 @@ package nsu.graphics.secondlab.filters;
 import java.awt.image.BufferedImage;
 
 public class WaterColourisation extends FilterApplier {
-    private Median medianFilter;
+    private final Median medianFilter;
 
     public WaterColourisation(Median medianFilter) {
         super();

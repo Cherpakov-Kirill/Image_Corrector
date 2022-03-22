@@ -1,9 +1,6 @@
 package nsu.graphics.secondlab.parameters;
 
 import javax.swing.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class SharpnessParameters extends ParametersWindow {
     private final ButtonGroup filterSizesButtons;
