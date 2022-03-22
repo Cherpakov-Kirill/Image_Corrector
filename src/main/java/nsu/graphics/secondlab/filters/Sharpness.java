@@ -40,7 +40,6 @@ public class Sharpness extends FilterApplier {
                     sum += filter[y][x];
                 }
             }
-            System.out.println("Size = " + filterSize + " Sum = " + sum);
             double normalizer = 1 / sum;
             for (int y = 0; y < filterSize; y++) {
                 for (int x = 0; x < filterSize; x++) {

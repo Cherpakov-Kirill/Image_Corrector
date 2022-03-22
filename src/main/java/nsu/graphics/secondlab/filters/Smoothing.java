@@ -25,7 +25,6 @@ public class Smoothing extends FilterApplier {
             if (filterSize != newFilterSize || sigma != newSigma) {
                 filterSize = newFilterSize;
                 sigma = newSigma;
-                System.out.println("New values: filterSize = " + filterSize + " sigma = " + sigma);
                 createFilter();
             }
             return applyFilter(image);

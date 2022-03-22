@@ -20,7 +20,6 @@ public class Rotation {
             double newDegree = parameters.getDegree();
             if (degree != newDegree) {
                 degree = newDegree;
-                System.out.println("New value: degree = " + degree);
             }
             return rotateImage(image, degree);
         }

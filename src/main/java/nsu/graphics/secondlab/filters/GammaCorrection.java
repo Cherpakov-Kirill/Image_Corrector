@@ -20,7 +20,6 @@ public class GammaCorrection {
             double newGamma = parameters.getGamma();
             if (gamma != newGamma) {
                 gamma = newGamma;
-                System.out.println("New value: gamma = " + gamma);
             }
             return applyFilter(image);
         }
