@@ -49,6 +49,7 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
 
             addSubMenu("Help", KeyEvent.VK_H);
             addMenuItem("Help/About...", "Shows program version and copyright information", KeyEvent.VK_A, "/About.png", "showAbout");
+            addMenuItem("Help/Usage", "Shows program usage information", KeyEvent.VK_U, "/Usage.png", "showUsage");
 
             addToolBarButton("File/Open");
             addToolBarButton("File/Save as");
@@ -86,6 +87,10 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        setEnabledForAllFilters(false);
+        setEnabledForAllView(false);
+        setEnabledForAllRendering(false);
+        setEnabledForSaveAs(false);
         selectView("View/Real size");
         menuRenderingMap.get("Rendering/Bilinear interpolation").setSelected(true);
         extensions = new String[4];
@@ -98,16 +103,61 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
     //File/Open - opens any image file
     public void openFile() {
         File file = getOpenFileName(extensions);
+        if (file == null) return;
         photoPanel.openFile(file);
         selectFilter("Filters/Set original");
+        setEnabledForAllFilters(true);
+        setEnabledForAllView(true);
+        setEnabledForAllRendering(true);
+        setEnabledForSaveAs(true);
         System.out.println("Opened file " + file.getAbsolutePath());
     }
 
     //File/Save - saves image file
     public void saveFile() {
         File file = getSaveFileName(extensions);
+        if (file == null) return;
         photoPanel.saveFile(file);
         System.out.println("Saving file to " + file.getAbsolutePath());
+    }
+
+    public void setEnabledForAllFilters(boolean b) {
+        for (JToggleButton item : menuToolbarFiltersMap.values()) {
+            item.setEnabled(b);
+        }
+        MenuElement element = getMenuElement("Filters");
+        if (element instanceof JMenu)
+            ((JMenu) element).setEnabled(b);
+        else if (element instanceof JPopupMenu)
+            ((JPopupMenu) element).getInvoker().setEnabled(b);
+    }
+
+    public void setEnabledForAllView(boolean b) {
+        for (JToggleButton item : menuToolbarViewMap.values()) {
+            item.setEnabled(b);
+        }
+        MenuElement element = getMenuElement("View");
+        if (element instanceof JMenu)
+            ((JMenu) element).setEnabled(b);
+        else if (element instanceof JPopupMenu)
+            ((JPopupMenu) element).getInvoker().setEnabled(b);
+    }
+
+    public void setEnabledForAllRendering(boolean b) {
+        MenuElement element = getMenuElement("Rendering");
+        if (element instanceof JMenu)
+            ((JMenu) element).setEnabled(b);
+        else if (element instanceof JPopupMenu)
+            ((JPopupMenu) element).getInvoker().setEnabled(b);
+    }
+
+    public void setEnabledForSaveAs(boolean b) {
+        AbstractButton button = getMenuToolbarElement("File/Save as");
+        if (button instanceof JButton)
+            button.setEnabled(b);
+        MenuElement element = getMenuElement("File/Save as");
+        if (element instanceof JMenuItem)
+            ((JMenuItem) element).setEnabled(b);
     }
 
     //View/Real size
@@ -122,15 +172,15 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
         selectView("View/Fit to screen");
     }
 
-    public void linearInterpolation(){
+    public void linearInterpolation() {
         photoPanel.setLinearInterpolation();
     }
 
-    public void cubicInterpolation(){
+    public void cubicInterpolation() {
         photoPanel.setCubicInterpolation();
     }
 
-    public void nearestInterpolation(){
+    public void nearestInterpolation() {
         photoPanel.setNearestInterpolation();
     }
 
@@ -235,6 +285,11 @@ public class PhotoCorrectorWindow extends MainFrame implements ComponentListener
     //Help/About... - shows program version and copyright information
     public void showAbout() {
         JOptionPane.showMessageDialog(this, "Image Corrector App. ver. 1.0\nCopyright 2022 Cherpakov Kirill, FIT, group 19201\nProgram for corrections any images.", "About Image Corrector App", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    //Help/Usage - shows program usage information
+    public void showUsage() {
+        JOptionPane.showMessageDialog(this, "Open image-file to start correcting your image.\nPush on the Open File button or find the same menu item in the menu \"File\"", "Usage", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void main(String[] args) {

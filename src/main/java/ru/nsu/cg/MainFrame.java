@@ -97,15 +97,11 @@ public class MainFrame extends JFrame {
         }
 
         final Method method = getClass().getMethod(actionMethod);
-        item.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    method.invoke(MainFrame.this);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+        item.addActionListener(evt -> {
+            try {
+                method.invoke(MainFrame.this);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
         return item;
@@ -150,15 +146,11 @@ public class MainFrame extends JFrame {
         }
 
         final Method method = getClass().getMethod(actionMethod);
-        item.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    method.invoke(MainFrame.this);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+        item.addActionListener(evt -> {
+            try {
+                method.invoke(MainFrame.this);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
         return item;
@@ -391,6 +383,31 @@ public class MainFrame extends JFrame {
     }
 
     /**
+     * Looks for menu element by menu path
+     *
+     * @param menuPath - '/'-separated path to menu item (example: "Help/About...")
+     * @return found menu item or null if no such item found
+     */
+    public AbstractButton getMenuToolbarElement(String menuPath) {
+        JToolBar element = toolBar;
+        for (Component subElement : element.getComponents()) {
+            if (subElement instanceof JButton) {
+                MenuElement menuElement = getMenuElement(menuPath);
+                if(menuElement instanceof JMenuItem && ((JButton) subElement).getToolTipText().equals(((JMenuItem)menuElement).getToolTipText())){
+                    return (AbstractButton) subElement;
+                }
+            }
+            if (subElement instanceof JToggleButton) {
+                MenuElement menuElement = getMenuElement(menuPath);
+                if(menuElement instanceof JMenuItem && ((JToggleButton) subElement).getToolTipText().equals(((JMenuItem)menuElement).getToolTipText())){
+                    return (AbstractButton) subElement;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Creates toolbar button which will behave exactly like specified menuitem
      *
      * @param item - menuitem to create toolbar button from
@@ -409,7 +426,6 @@ public class MainFrame extends JFrame {
      *
      * @param menuPath - path to menu item to create toolbar button from
      * @return created toolbar button
-     * @see //MainFrame.getMenuItem
      */
     public JButton createToolBarButton(String menuPath) {
         JMenuItem item = (JMenuItem) getMenuElement(menuPath);
@@ -447,7 +463,6 @@ public class MainFrame extends JFrame {
      *
      * @param menuPath - path to menu item to create toolbar toggle button from
      * @return created toolbar toggle button
-     * @see //MainFrame.getMenuItem
      */
     public JToggleButton createToolBarToggleButton(String menuPath) {
         JMenuItem item = (JMenuItem) getMenuElement(menuPath);

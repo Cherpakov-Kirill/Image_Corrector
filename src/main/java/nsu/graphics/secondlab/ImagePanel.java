@@ -99,14 +99,17 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
 
     public void setLinearInterpolation() {
         interpolationType = RenderingHints.VALUE_INTERPOLATION_BILINEAR;
+        repaint();
     }
 
     public void setCubicInterpolation() {
         interpolationType = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+        repaint();
     }
 
     public void setNearestInterpolation() {
         interpolationType = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
+        repaint();
     }
 
     /**
@@ -121,6 +124,7 @@ public class ImagePanel extends JPanel implements MouseListener, MouseMotionList
     private void setImage(BufferedImage newIm) {
         // fitToScreen == true (means "fit screen (panel))"
         // fitToScreen == false (means "real size (panel))"
+        if(newIm == null) return;
         img = new BufferedImage(newIm.getWidth(), newIm.getHeight(), newIm.getType());
         Graphics g = img.getGraphics();
         g.drawImage(newIm, 0, 0, null);
